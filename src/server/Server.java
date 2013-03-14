@@ -1,5 +1,7 @@
 package server;
 
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class Server {
@@ -16,10 +18,33 @@ public class Server {
 	
 	Server() {
 		db = new Database();
+		clients = new ArrayList<Client>();
 	}
 	
 	void WaitForConnections() {
-		
+		Socket clientSocket = null;
+		try {
+			clientSocket = new ServerSocket(50039).accept();
+			Client client = new Client(clientSocket, this);
+			clients.add(client);
+			new Thread(client).run();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				clientSocket.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	String HandleRequest(String request) {
+		return null;
+	}
+	
+	void removeClient(Client client) {
+		clients.remove(client);
 	}
 
 }
