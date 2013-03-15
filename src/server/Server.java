@@ -1,5 +1,7 @@
 package server;
 
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -22,15 +24,15 @@ public class Server {
 	
 	public static void main(String[] args) {
 		Server server = new Server();
-		while (true) {
-			server.WaitForConnections();
-		}
+//		while (true) {
+//			server.WaitForConnections();
+//		}
 	}
 	
 	Server() {
 		db = new Database();
 		clients = new ArrayList<Client>();
-		ObjectsToXml(new ArrayList<Object>(db.getAllAppointments().values()));
+		System.out.println(ObjectsToXml(new ArrayList<Object>(db.getAllAppointments().values())));
 	}
 	
 	void WaitForConnections() {
@@ -69,22 +71,26 @@ public class Server {
 	String ObjectsToXml(ArrayList<Object> objects) {
 		try {
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			Element root = doc.createElement("objects");
 			for (int i = 0; i < objects.size(); i++) {
 				if (objects.get(i) instanceof Appointment) {
 					Appointment appointment = (Appointment) objects.get(i);
-					Element xmlAppointment = doc.createElement("appointment");
-					xmlAppointment.setAttribute("appointmentId", String.valueOf(appointment.getAppointmentId()));
-					xmlAppointment.setAttribute("title", appointment.getTitle());
-					xmlAppointment.setAttribute("descpiption", appointment.getDescription());
-					xmlAppointment.setAttribute("startTime", String.valueOf(appointment.getStartTime().getTimeInMillis()));
-					xmlAppointment.setAttribute("finishTime", String.valueOf(appointment.getFinishTime().getTimeInMillis()));
-					xmlAppointment.setAttribute("room", appointment.getRoom().getRoomNumber());
-					xmlAppointment.setAttribute("owner", appointment.getOwner().getUsername());
-					doc.appendChild(xmlAppointment);
+					Element element = doc.createElement("appointment");
+					element.setAttribute("appointmentId", String.valueOf(appointment.getAppointmentId()));
+					element.setAttribute("title", appointment.getTitle());
+					element.setAttribute("descpiption", appointment.getDescription());
+					element.setAttribute("startTime", String.valueOf(appointment.getStartTime().getTimeInMillis()));
+					element.setAttribute("finishTime", String.valueOf(appointment.getFinishTime().getTimeInMillis()));
+					element.setAttribute("room", (appointment.getRoom() != null) ? appointment.getRoom().getRoomNumber() : "null");
+					element.setAttribute("owner", (appointment.getOwner() != null) ? appointment.getOwner().getUsername() : "null");
+					root.appendChild(element);
 				}
 			}
+			doc.appendChild(root);
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			transformer.transform(new DOMSource(doc), new StreamResult(System.out));
+			Writer writer = new StringWriter();
+			transformer.transform(new DOMSource(doc), new StreamResult(writer));
+			return writer.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -21,6 +21,12 @@ public class Database {
 	
 	Database() {
 		appointments = new HashMap<Integer, Appointment>();
+		groups = new HashMap<String, Group>();
+		members = new ArrayList<Member>();
+		participants = new ArrayList<Participant>();
+		rooms = new HashMap<String, Room>();
+		subgroups = new ArrayList<Subgroup>();
+		users = new HashMap<String, User>();
 		Connection con = null;
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -30,7 +36,7 @@ public class Database {
 				con.createStatement().execute("USE CalFiftyDB");
 				ResultSet rs = con.createStatement().executeQuery("SELECT * FROM Appointments");
 				while (rs.next()) {
-					appointments.put(rs.getInt(0), new Appointment(rs.getInt(0), rs.getString(1), rs.getString(2), rs.getLong(3), rs.getLong(4), rooms.get(rs.getString(5)), users.get(rs.getString(6))));
+					appointments.put(rs.getInt(1), new Appointment(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getLong(4), rs.getLong(5), rooms.get(rs.getString(6)), users.get(rs.getString(7))));
 				}
 			} else {
 				System.out.println("Connection failed");
