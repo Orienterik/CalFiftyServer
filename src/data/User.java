@@ -14,5 +14,9 @@ public class User {
 	private ArrayList<Group> leader;
 	private ArrayList<Participant> appointments;
 	private ArrayList<Member> groups;
+	
+	public String getUsername() {
+		return username;
+	}
 
 }

@@ -10,5 +10,9 @@ public class Room {
 	private int size;
 	
 	private ArrayList<Appointment> appointments;
+	
+	public String getRoomNumber() {
+		return roomNumber;
+	}
 
 }
