@@ -1,23 +1,17 @@
 package data;
 
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
 
 public class Appointment {
 	
 	private int appointmentId;
-	
 	private String title;
 	private String description;
 	private Calendar startTime;
 	private Calendar finishTime;
 	private Room room;
 	private User owner;
-	
-	private ArrayList<Participant> participants;
 	
 	public Appointment(int appointmentId, String title, String description, long startTime, long finishTime, Room room, User owner) {
 		this.appointmentId = appointmentId;

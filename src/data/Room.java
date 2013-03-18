@@ -1,18 +1,21 @@
 package data;
 
-import java.util.ArrayList;
-
-
 public class Room {
 	
 	private String roomNumber;
-	
 	private int size;
 	
-	private ArrayList<Appointment> appointments;
+	public Room(String roomNumber, int size) {
+		this.roomNumber = roomNumber;
+		this.size = size;
+	}
 	
 	public String getRoomNumber() {
 		return roomNumber;
+	}
+	
+	public int getSize() {
+		return size;
 	}
 
 }

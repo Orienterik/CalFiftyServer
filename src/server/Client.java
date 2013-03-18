@@ -1,7 +1,6 @@
 package server;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -23,7 +22,18 @@ public class Client implements Runnable {
 			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			writer = new OutputStreamWriter(socket.getOutputStream());
 			while (!socket.isClosed()) {
-				server.HandleRequest(reader.readLine());
+				String msg = reader.readLine();
+				String cmd = msg.substring(0, 6);
+				String xml = msg.substring(6);
+				if (cmd == "select") {
+					server.selectObjects(this);
+				} else if (cmd == "insert") {
+					server.insertObjects(ConvertXML.XmlToObjects(xml, server.getDatabase()));
+				} else if (cmd == "update") {
+					server.updateObjects(ConvertXML.XmlToObjects(xml, server.getDatabase()));
+				} else if (cmd == "delete") {
+					server.deleteObjects(ConvertXML.XmlToObjects(xml, server.getDatabase()));
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -37,10 +47,10 @@ public class Client implements Runnable {
 		}
 	}
 	
-	void sendUpdate(String message) {
+	void sendMessage(String msg) {
 		try {
-			writer.write(message);
-		} catch (IOException e) {
+			writer.write(msg);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

@@ -1,22 +1,27 @@
 package data;
 
-import java.util.ArrayList;
-
-
 public class User {
 	
 	private String username;
-	
 	private String password;
 	private String name;
 	
-	private ArrayList<Appointment> owner;
-	private ArrayList<Group> leader;
-	private ArrayList<Participant> appointments;
-	private ArrayList<Member> groups;
+	public User(String username, String password, String name) {
+		this.username = username;
+		this.password = password;
+		this.name = name;
+	}
 	
 	public String getUsername() {
 		return username;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 }

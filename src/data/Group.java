@@ -1,16 +1,21 @@
 package data;
 
-import java.util.ArrayList;
-
-
 public class Group {
 	
 	private String groupName;
-	
 	private User leader;
 	
-	private ArrayList<Member> members;
-	private ArrayList<Subgroup> subgroups;
-	private ArrayList<Subgroup> parentGroups;
+	public Group(String groupName, User leader) {
+		this.groupName = groupName;
+		this.leader = leader;
+	}
+	
+	public String getGroupName() {
+		return groupName;
+	}
+	
+	public User getLeader() {
+		return leader;
+	}
 
 }
