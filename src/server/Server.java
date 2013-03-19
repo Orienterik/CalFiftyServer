@@ -1,5 +1,6 @@
 package server;
 
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -12,8 +13,11 @@ public class Server {
 	private Database database;
 	private ArrayList<Client> clients;
 	
+	private int nextPort = 50040;
+	
 	public static void main(String[] args) {
 		Server server = new Server();
+		new Thread(server.new PortHandler()).start();
 		while (true) {
 			server.WaitForConnections();
 		}
@@ -24,21 +28,38 @@ public class Server {
 		clients = new ArrayList<Client>();
 	}
 	
+	private class PortHandler implements Runnable {
+		
+		public void run() {
+			while (true) {
+				Socket clientSocket = null;
+				try {
+					clientSocket = new ServerSocket(50039).accept();
+					PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
+					writer.println(nextPort++);
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						clientSocket.close();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	
+	}
+	
 	void WaitForConnections() {
 		Socket clientSocket = null;
 		try {
-			clientSocket = new ServerSocket(50039).accept();
+			clientSocket = new ServerSocket(nextPort).accept();
 			Client client = new Client(clientSocket, this);
 			clients.add(client);
-			new Thread(client).run();
+			new Thread(client).start();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				clientSocket.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 	}
 	
@@ -47,16 +68,13 @@ public class Server {
 	}
 	
 	void selectObjects(Client client) {
-		ArrayList<Object> objects = new ArrayList<Object>();
-		objects.addAll(database.getAppointments().values());
-		objects.addAll(database.getGroups().values());
-		objects.addAll(database.getMembers());
-		objects.addAll(database.getParticipants());
-		objects.addAll(database.getRooms().values());
-		objects.addAll(database.getSubgroups());
-		objects.addAll(database.getUsers().values());
-		String msg = ConvertXML.ObjectsToXml(objects);
-		client.sendMessage(msg);
+		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getRooms().values())));
+		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getUsers().values())));
+		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getAppointments().values())));
+		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getGroups().values())));
+		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getMembers())));
+		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getParticipants())));
+		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getSubgroups())));
 	}
 	
 	void insertObjects(ArrayList<Object> objects) {

@@ -99,7 +99,7 @@ public class ConvertXML {
 			ArrayList<Object> objects = new ArrayList<Object>();
 			new ByteArrayInputStream(xml.getBytes());
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
-			NodeList rooms = doc.getElementsByTagName("group");
+			NodeList rooms = doc.getElementsByTagName("room");
 			for (int i = 0; i < rooms.getLength(); i++) {
 				NamedNodeMap attributes = rooms.item(i).getAttributes();
 				String roomNumber = attributes.getNamedItem("roomNumber").getTextContent();
