@@ -89,7 +89,7 @@ public class ConvertXML {
 			transformer.transform(new DOMSource(doc), new StreamResult(writer));
 			return writer.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		return null;
 	}
@@ -158,7 +158,7 @@ public class ConvertXML {
 			}
 			return objects;
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		return null;
 	}

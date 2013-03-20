@@ -38,7 +38,6 @@ public class Database {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 			con = DriverManager.getConnection("jdbc:sqlserver://localhost:1433","sa","CalFiftyPassword");
 			if (con != null) {
-				System.out.println("Connection established"); //Test
 				con.createStatement().execute("USE CalFiftyDB");
 				ResultSet rs = con.createStatement().executeQuery("SELECT * FROM Rooms");
 				while (rs.next()) {
@@ -68,17 +67,15 @@ public class Database {
 				while (rs.next()) {
 					subgroups.add(new Subgroup(groups.get(rs.getString(1)), groups.get(rs.getString(2))));
 				}
-			} else {
-				System.out.println("Connection failed"); //Test
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} finally {
 			if (con != null) {
 				try {
 					con.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+//					e.printStackTrace();
 				}
 			}
 		}
@@ -94,13 +91,13 @@ public class Database {
 				con.createStatement().executeQuery(sqlStatment);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} finally {
 			if (con != null) {
 				try {
 					con.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+//					e.printStackTrace();
 				}
 			}
 		}
@@ -144,7 +141,12 @@ public class Database {
 	
 	void updateParticipant(Participant participant) {
 		executeSQL("UPDATE Participants SET Alarm=" + participant.getAlarm().getTimeInMillis() + ", Status=" + participant.getStatus() + " WHERE AppointmentID=" + participant.getAppointment().getAppointmentId() + " AND Username=" + participant.getUser().getUsername());
-		//participants.add(participant);
+		for (int i = 0; i < participants.size(); i++) {
+			if (participants.get(i).getAppointment() == participant.getAppointment() && participants.get(i).getUser() == participant.getUser()) {
+				participants.set(i, participant);
+				break;
+			}
+		}
 	}
 	
 	void deleteParticipant(Participant participant) {

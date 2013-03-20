@@ -27,24 +27,24 @@ public class Client implements Runnable {
 				String cmd = msg.substring(0, 6);
 				String xml = msg.substring(6);
 				if (cmd.equals("select")) {
-					server.selectObjects(this);
+					server.selectObjects(this, socket);
 				} else if (cmd.equals("insert")) {
-					server.insertObjects(ConvertXML.XmlToObjects(xml, server.getDatabase()));
+					server.insertObjects(ConvertXML.XmlToObjects(xml, server.getDatabase()), socket);
 				} else if (cmd.equals("update")) {
-					server.updateObjects(ConvertXML.XmlToObjects(xml, server.getDatabase()));
+					server.updateObjects(ConvertXML.XmlToObjects(xml, server.getDatabase()), socket);
 				} else if (cmd.equals("delete")) {
-					server.deleteObjects(ConvertXML.XmlToObjects(xml, server.getDatabase()));
+					server.deleteObjects(ConvertXML.XmlToObjects(xml, server.getDatabase()), socket);
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} finally {
 			try {
 				socket.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
-			server.removeClient(this);
+			server.removeClient(this, socket);
 		}
 	}
 	

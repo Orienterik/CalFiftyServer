@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Map;
 
 import data.Appointment;
 import data.Participant;
@@ -24,7 +25,9 @@ public class Server {
 	}
 	
 	Server() {
+		System.out.println("Fetching data from database...");
 		database = new Database();
+		System.out.println("Data fetched");
 		clients = new ArrayList<Client>();
 	}
 	
@@ -38,12 +41,12 @@ public class Server {
 					PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
 					writer.println(nextPort++);
 				} catch (Exception e) {
-					e.printStackTrace();
+//					e.printStackTrace();
 				} finally {
 					try {
 						clientSocket.close();
 					} catch (Exception e) {
-						e.printStackTrace();
+//						e.printStackTrace();
 					}
 				}
 			}
@@ -54,12 +57,14 @@ public class Server {
 	void WaitForConnections() {
 		Socket clientSocket = null;
 		try {
+			System.out.println("Ready for connection from new client...");
 			clientSocket = new ServerSocket(nextPort).accept();
+			System.out.println(clientSocket.getInetAddress() + " has connected");
 			Client client = new Client(clientSocket, this);
 			clients.add(client);
 			new Thread(client).start();
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 	}
 	
@@ -67,7 +72,7 @@ public class Server {
 		return database;
 	}
 	
-	void selectObjects(Client client) {
+	void selectObjects(Client client, Socket socket) {
 		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getRooms().values())));
 		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getUsers().values())));
 		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getAppointments().values())));
@@ -75,11 +80,17 @@ public class Server {
 		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getMembers())));
 		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getParticipants())));
 		client.sendMessage("select" + ConvertXML.ObjectsToXml(new ArrayList<Object>(database.getSubgroups())));
+		System.out.println("Data has been sent to " + socket.getInetAddress());
 	}
 	
-	void insertObjects(ArrayList<Object> objects) {
+	void insertObjects(ArrayList<Object> objects, Socket socket) {
 		for (int i = 0; i < objects.size(); i++) {
 			if (objects.get(i) instanceof Appointment) {
+				int appointmentId = 1;
+				while (database.getAppointments().get(appointmentId) != null) {
+					appointmentId++;
+				}
+				((Appointment) objects.get(i)).setAppointmentId(appointmentId);
 				database.insertAppointment((Appointment) objects.get(i));
 			} else if (objects.get(i) instanceof Participant) {
 				database.insertParticipant((Participant) objects.get(i));
@@ -89,9 +100,10 @@ public class Server {
 		for (int i = 0; i < clients.size(); i++) {
 			clients.get(i).sendMessage(msg);
 		}
+		System.out.println(socket.getInetAddress() + " has inserted data into the database");
 	}
 	
-	void updateObjects(ArrayList<Object> objects) {
+	void updateObjects(ArrayList<Object> objects, Socket socket) {
 		for (int i = 0; i < objects.size(); i++) {
 			if (objects.get(i) instanceof Appointment) {
 				database.updateAppointment((Appointment) objects.get(i));
@@ -103,9 +115,10 @@ public class Server {
 		for (int i = 0; i < clients.size(); i++) {
 			clients.get(i).sendMessage(msg);
 		}
+		System.out.println(socket.getInetAddress() + " has updated data in the database");
 	}
 	
-	void deleteObjects(ArrayList<Object> objects) {
+	void deleteObjects(ArrayList<Object> objects, Socket socket) {
 		for (int i = 0; i < objects.size(); i++) {
 			if (objects.get(i) instanceof Appointment) {
 				database.deleteAppointment((Appointment) objects.get(i));
@@ -117,10 +130,12 @@ public class Server {
 		for (int i = 0; i < clients.size(); i++) {
 			clients.get(i).sendMessage(msg);
 		}
+		System.out.println(socket.getInetAddress() + " has deleted data from the database");
 	}
 	
-	void removeClient(Client client) {
+	void removeClient(Client client, Socket socket) {
 		clients.remove(client);
+		System.out.println(socket.getInetAddress() + " has disconnected");
 	}
 
 }

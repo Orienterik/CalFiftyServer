@@ -29,6 +29,10 @@ public class Appointment {
 		return appointmentId;
 	}
 	
+	public void setAppointmentId(int appointmentId) {
+		this.appointmentId = appointmentId;
+	}
+	
 	public String getTitle() {
 		return title;
 	}
