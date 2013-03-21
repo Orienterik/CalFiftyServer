@@ -40,6 +40,7 @@ public class Server {
 					clientSocket = new ServerSocket(50039).accept();
 					PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
 					writer.println(nextPort++);
+					writer.close();
 				} catch (Exception e) {
 //					e.printStackTrace();
 				} finally {
@@ -86,11 +87,6 @@ public class Server {
 	void insertObjects(ArrayList<Object> objects, Socket socket) {
 		for (int i = 0; i < objects.size(); i++) {
 			if (objects.get(i) instanceof Appointment) {
-				int appointmentId = 1;
-				while (database.getAppointments().get(appointmentId) != null) {
-					appointmentId++;
-				}
-				((Appointment) objects.get(i)).setAppointmentId(appointmentId);
 				database.insertAppointment((Appointment) objects.get(i));
 			} else if (objects.get(i) instanceof Participant) {
 				database.insertParticipant((Participant) objects.get(i));

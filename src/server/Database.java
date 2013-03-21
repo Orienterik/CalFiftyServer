@@ -108,17 +108,20 @@ public class Database {
 	}
 	
 	void insertAppointment(Appointment appointment) {
-		executeSQL("INSERT INTO Appointments VALUES (" + appointment.getAppointmentId() + ", " + appointment.getTitle() + ", " + appointment.getDescription() + ", " + appointment.getStartTime().getTimeInMillis() + ", " + appointment.getFinishTime().getTimeInMillis() + ", " + appointment.getRoom().getRoomNumber() + ", " + appointment.getOwner().getUsername() + ")");
+		String sql = "INSERT INTO Appointments VALUES (" + appointment.getAppointmentId() + ", '" + appointment.getTitle() + "', '" + appointment.getDescription() + "', " + appointment.getStartTime().getTimeInMillis() + ", " + appointment.getFinishTime().getTimeInMillis() + ", '" + appointment.getRoom().getRoomNumber() + "', '" + appointment.getOwner().getUsername() + "')";
+		executeSQL(sql);
 		appointments.put(appointment.getAppointmentId(), appointment);
 	}
 	
 	void updateAppointment(Appointment appointment) {
-		executeSQL("UPDATE Appointments SET Title=" + appointment.getTitle() + ", Description=" + appointment.getDescription() + ", StartTime=" + appointment.getStartTime().getTimeInMillis() + ", FinishTime=" + appointment.getFinishTime().getTimeInMillis() + ", RoomNumber=" + appointment.getRoom().getRoomNumber() + ", Owner=" + appointment.getOwner().getUsername() + " WHERE ApplicationID=" + appointment.getAppointmentId());
+		String sql = "UPDATE Appointments SET Title='" + appointment.getTitle() + "', Description='" + appointment.getDescription() + "', StartTime=" + appointment.getStartTime().getTimeInMillis() + ", FinishTime=" + appointment.getFinishTime().getTimeInMillis() + ", RoomNumber='" + appointment.getRoom().getRoomNumber() + "', Owner='" + appointment.getOwner().getUsername() + "' WHERE ApplicationID=" + appointment.getAppointmentId();
+		executeSQL(sql);
 		appointments.put(appointment.getAppointmentId(), appointment);
 	}
 	
 	void deleteAppointment(Appointment appointment) {
-		executeSQL("DELETE FROM Appointments WHERE ApplicationID=" + appointment.getAppointmentId());
+		String sql = "DELETE FROM Appointments WHERE ApplicationID=" + appointment.getAppointmentId();
+		executeSQL(sql);
 		appointments.remove(appointment.getAppointmentId());
 	}
 	
@@ -135,12 +138,12 @@ public class Database {
 	}
 	
 	void insertParticipant(Participant participant) {
-		executeSQL("INSERT INTO Participants VALUES (" + participant.getAppointment().getAppointmentId() + ", " + participant.getUser().getUsername() + ", " + participant.getAlarm().getTimeInMillis() + ", " + participant.getStatus() + ")");
+		executeSQL("INSERT INTO Participants VALUES (" + participant.getAppointment().getAppointmentId() + ", '" + participant.getUser().getUsername() + "', " + participant.getAlarm().getTimeInMillis() + ", '" + participant.getStatus() + "')");
 		participants.add(participant);
 	}
 	
 	void updateParticipant(Participant participant) {
-		executeSQL("UPDATE Participants SET Alarm=" + participant.getAlarm().getTimeInMillis() + ", Status=" + participant.getStatus() + " WHERE AppointmentID=" + participant.getAppointment().getAppointmentId() + " AND Username=" + participant.getUser().getUsername());
+		executeSQL("UPDATE Participants SET Alarm=" + participant.getAlarm().getTimeInMillis() + ", Status='" + participant.getStatus() + "' WHERE AppointmentID=" + participant.getAppointment().getAppointmentId() + " AND Username='" + participant.getUser().getUsername() + "'");
 		for (int i = 0; i < participants.size(); i++) {
 			if (participants.get(i).getAppointment() == participant.getAppointment() && participants.get(i).getUser() == participant.getUser()) {
 				participants.set(i, participant);
@@ -150,7 +153,7 @@ public class Database {
 	}
 	
 	void deleteParticipant(Participant participant) {
-		executeSQL("DELETE FROM Participants WHERE AppointmentID=" + participant.getAppointment().getAppointmentId() + " AND Username=" + participant.getUser().getUsername());
+		executeSQL("DELETE FROM Participants WHERE AppointmentID=" + participant.getAppointment().getAppointmentId() + " AND Username='" + participant.getUser().getUsername() + "'");
 		participants.remove(participant);
 	}
 	

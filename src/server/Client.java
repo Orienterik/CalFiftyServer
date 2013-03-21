@@ -41,6 +41,8 @@ public class Client implements Runnable {
 		} finally {
 			try {
 				socket.close();
+				reader.close();
+				writer.close();
 			} catch (Exception e) {
 //				e.printStackTrace();
 			}
