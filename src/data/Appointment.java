@@ -33,24 +33,48 @@ public class Appointment {
 		return title;
 	}
 	
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
 	public String getDescription() {
 		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 	public Calendar getStartTime() {
 		return startTime;
 	}
 	
+	public void setStartTime(Calendar startTime) {
+		this.startTime = startTime;
+	}
+	
 	public Calendar getFinishTime() {
 		return finishTime;
+	}
+	
+	public void setFinishTime(Calendar finishTime) {
+		this.finishTime = finishTime;
 	}
 	
 	public Room getRoom() {
 		return room;
 	}
 	
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+	
 	public User getOwner() {
 		return owner;
+	}
+	
+	public void setOwner(User owner) {
+		this.owner = owner;
 	}
 
 }

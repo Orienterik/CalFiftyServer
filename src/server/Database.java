@@ -116,7 +116,13 @@ public class Database {
 	void updateAppointment(Appointment appointment) {
 		String sql = "UPDATE Appointments SET Title='" + appointment.getTitle() + "', Description='" + appointment.getDescription() + "', StartTime=" + appointment.getStartTime().getTimeInMillis() + ", FinishTime=" + appointment.getFinishTime().getTimeInMillis() + ", RoomNumber='" + appointment.getRoom().getRoomNumber() + "', Owner='" + appointment.getOwner().getUsername() + "' WHERE ApplicationID=" + appointment.getAppointmentId();
 		executeSQL(sql);
-		appointments.put(appointment.getAppointmentId(), appointment);
+		Appointment app = appointments.get(appointment.getAppointmentId());
+		app.setTitle(appointment.getTitle());
+		app.setDescription(appointment.getDescription());
+		app.setStartTime(appointment.getStartTime());
+		app.setFinishTime(appointment.getFinishTime());
+		app.setRoom(appointment.getRoom());
+		app.setOwner(appointment.getOwner());
 	}
 	
 	void deleteAppointment(Appointment appointment) {
@@ -146,7 +152,8 @@ public class Database {
 		executeSQL("UPDATE Participants SET Alarm=" + participant.getAlarm().getTimeInMillis() + ", Status='" + participant.getStatus() + "' WHERE AppointmentID=" + participant.getAppointment().getAppointmentId() + " AND Username='" + participant.getUser().getUsername() + "'");
 		for (int i = 0; i < participants.size(); i++) {
 			if (participants.get(i).getAppointment() == participant.getAppointment() && participants.get(i).getUser() == participant.getUser()) {
-				participants.set(i, participant);
+				participants.get(i).setAlarm(participant.getAlarm());
+				participants.get(i).setStatus(participant.getStatus());
 				break;
 			}
 		}
@@ -154,7 +161,12 @@ public class Database {
 	
 	void deleteParticipant(Participant participant) {
 		executeSQL("DELETE FROM Participants WHERE AppointmentID=" + participant.getAppointment().getAppointmentId() + " AND Username='" + participant.getUser().getUsername() + "'");
-		participants.remove(participant);
+		for (int i = 0; i < participants.size(); i++) {
+			if (participants.get(i).getAppointment() == participant.getAppointment() && participants.get(i).getUser() == participant.getUser()) {
+				participants.remove(i);
+				break;
+			}
+		}
 	}
 	
 	Map<String, Room> getRooms() {

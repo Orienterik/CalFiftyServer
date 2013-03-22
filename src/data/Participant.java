@@ -30,8 +30,16 @@ public class Participant {
 		return alarm;
 	}
 	
+	public void setAlarm(Calendar alarm) {
+		this.alarm = alarm;
+	}
+	
 	public String getStatus() {
 		return status;
+	}
+	
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }
